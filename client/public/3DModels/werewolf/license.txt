@@ -1,0 +1,11 @@
+Model Information:
+* title:	Werewolf Stylized Animated
+* source:	https://sketchfab.com/3d-models/werewolf-stylized-animated-16cefdf83e5e457eb6e53f1fbd97edb5
+* author:	imitate (https://sketchfab.com/imitate)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Werewolf Stylized Animated" (https://sketchfab.com/3d-models/werewolf-stylized-animated-16cefdf83e5e457eb6e53f1fbd97edb5) by imitate (https://sketchfab.com/imitate) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

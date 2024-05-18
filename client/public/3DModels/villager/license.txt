@@ -1,0 +1,11 @@
+Model Information:
+* title:	Full Moon Fears: Pitchfork Villager
+* source:	https://sketchfab.com/3d-models/full-moon-fears-pitchfork-villager-cbad4c59a8424f51ae0dd05c78ea3ffc
+* author:	Marcus Rain Skoog (https://sketchfab.com/mistrain)
+
+Model License:
+* license type:	CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions can not be distributed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Full Moon Fears: Pitchfork Villager" (https://sketchfab.com/3d-models/full-moon-fears-pitchfork-villager-cbad4c59a8424f51ae0dd05c78ea3ffc) by Marcus Rain Skoog (https://sketchfab.com/mistrain) licensed under CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)

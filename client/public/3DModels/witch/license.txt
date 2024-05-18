@@ -1,0 +1,11 @@
+Model Information:
+* title:	Witch
+* source:	https://sketchfab.com/3d-models/witch-fd9a39890fc64ae8bb3cad97e4a2d4f3
+* author:	LxNazarov (https://sketchfab.com/LxNazarov)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Witch" (https://sketchfab.com/3d-models/witch-fd9a39890fc64ae8bb3cad97e4a2d4f3) by LxNazarov (https://sketchfab.com/LxNazarov) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

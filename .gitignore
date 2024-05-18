@@ -1,0 +1,29 @@
+# Dependency directories
+client/node_modules/
+
+# Environment variables
+client/.env
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Optional npm cache directory
+client/.npm/
+
+# Optional eslint cache
+.eslintcache
+
+# Package lock files
+client/package-lock.json
