@@ -18,10 +18,11 @@
 
 - [Introduction](#introduction)
 - [Contexte](#contexte)
+- [Gameplay](#gameplay)
 - [Fonctionnalités](#fonctionnalités)
-- [Feedback](#feedback)
-- [Contributeurs](#contributeurs)
+- [Notes techniques](#notes-techniques)
 - [Lancer le projet en local](#lancer-en-local)
+- [Feedback](#feedback)
 - [Contributeurs](#contributeurs)
 - [Remerciements](#remerciements)
 
