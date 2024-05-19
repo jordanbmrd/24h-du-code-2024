@@ -1,5 +1,5 @@
 const Role = {
-    WEREWOLF: "Loup Garou",
+    WEREWOLF: "Loup-Garou",
     VILLAGER: "Villageois",
     STEER: "Voyante",
 };

@@ -1,11 +1,12 @@
 import {ChakraProvider, Box} from '@chakra-ui/react'
-import {GameView} from './page/GameView.jsx';
+import {GameView} from './pages/GameView.jsx';
 import theme from './theme';
 import {RouterProvider, createBrowserRouter, Outlet} from 'react-router-dom';
 import {GameProvider} from "./contexts/GameContext.jsx";
-import BeforeGameView from "./page/BeforeGameView.jsx";
 import Victory from "./components/animations/Victory.jsx";
 import Lose from "./components/animations/Lose.jsx";
+import BeforeGameView from "./pages/BeforeGameView.jsx";
+import {WolfNotificationProvider} from "./contexts/WolfNotificationContext.jsx";
 
 const HeaderLayout = () => (
     <>
@@ -24,7 +25,7 @@ const routerWithoutLogin = [
         children: [
             {
                 path: '/',
-                element: <BeforeGameView/>,
+                element: <BeforeGameView />,
             },
             {
                 path: '/game',
@@ -46,11 +47,13 @@ const router = createBrowserRouter([...routerWithoutLogin]);
 
 const App = () => {
     return (
-        <GameProvider>
-            <ChakraProvider theme={theme}>
-                    <RouterProvider router={router}/>
-            </ChakraProvider>
-        </GameProvider>
+        <WolfNotificationProvider>
+            <GameProvider>
+                <ChakraProvider theme={theme}>
+                        <RouterProvider router={router}/>
+                </ChakraProvider>
+            </GameProvider>
+        </WolfNotificationProvider>
     )
 }
 

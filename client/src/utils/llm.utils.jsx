@@ -1,5 +1,7 @@
 // This file contains all useful methods in order to communicate with the Large-Language-Model properly
 
+import { DEFAULT_RULES_CONTEXT, CHAT_RULES_CONTEXT } from '../constants/llm.constants.js';
+
 // An example of context for the LLM
 // This context should contain the behovioral instructions for the LLM
 /* const context = {
@@ -49,34 +51,8 @@ const buildCurrentStateContext = (rounds, players) => {
 // - actionsHistory : Actions of the game (eg: { "day": 1, "eliminated": "player1", "method": "vote" })
 // - currentState (rounds and players) : Current state of the game (eg: { "remaining_players": 3, "current_suspicions": ["player2 is suspected by player3"], "alliances": ["player3 and player4 are allied"] }
 // - objective : What is the role of the LLM ?
-const buildContext = (players, actionsHistory, rounds) => ({
-    rules: "YOU ARE THE WORLD'S BEST STRATEGY ANALYST FOR THE GAME \"LES LOUPS-GAROUS DE THIERCELIEUX,\" RECOGNIZED FOR YOUR ABILITY TO ANALYZE GAME STATES AND MAKE THE MOST LOGICAL AND STRATEGIC DECISIONS. YOUR TASK IS TO REVIEW THE PROVIDED GAME CONTEXT AND IDENTIFY THE MOST SUSPECT PLAYER TO ELIMINATE.\n" +
-        "\n" +
-        "**Key Objectives:**\n" +
-        "- REVIEW THE CURRENT GAME STATE, INCLUDING REMAINING PLAYERS, SUSPICIONS, AND ALLIANCES.\n" +
-        "- ANALYZE THE SUSPECT LIST AND CHOOSE THE MOST LOGICAL PLAYER TO ELIMINATE.\n" +
-        "- PROVIDE A CLEAR AND CONCISE DECISION BY RETURNING ONLY THE NAME OF THE PLAYER TO BE ELIMINATED.\n" +
-        "\n" +
-        "**Chain of Thoughts:**\n" +
-        "1. **Review Game Rules and Context:**\n" +
-        "   - Understand the rules of \"Les Loups-Garous de Thiercelieux.\"\n" +
-        "   - Familiarize yourself with the current game state, remaining players, suspicions, and alliances.\n" +
-        "\n" +
-        "2. **Make a Strategic Decision:**\n" +
-        "   - Based on the analysis, identify the player with the highest suspicion.\n" +
-        "   - Choose the player who is most likely to be a loup-garou according to the current suspicions and alliances.\n" +
-        "\n" +
-        "3. **Provide the Decision:**\n" +
-        "   - Return the name (ONLY THE NAME) of the player to be eliminated without additional context or explanations.\n" +
-        "\n" +
-        "**What Not To Do:**\n" +
-        "- DO NOT PROVIDE A GENERIC OR NON-COMMITTAL RESPONSE.\n" +
-        "- DO NOT RETURN ANYTHING OTHER THAN THE NAME OF THE PLAYER TO BE ELIMINATED.\n" +
-        "- DO NOT IGNORE THE CURRENT SUSPICIONS AND ALLIANCES IN THE ANALYSIS.\n" +
-        "- DO NOT PROVIDE PERSONAL OPINIONS OR IRRELEVANT INFORMATION.\n" +
-        "\n" +
-        "**Example Response:**\n" +
-        + players[0].username + "\n",
+const buildContext = (llmRules, players, actionsHistory, rounds) => ({
+    rules: llmRules,
     roles: buildRolesContextFromPlayers(players),
     previous_actions: actionsHistory,
     current_state: buildCurrentStateContext(rounds, players),
@@ -90,10 +66,47 @@ const buildContext = (players, actionsHistory, rounds) => ({
 // - currentState : Current state of the game (eg: { "remaining_players": 3, "current_suspicions": ["player2 is suspected by player3"], "alliances": ["player3 and player4 are allied"] }
 // - objective : What is the role of the LLM ?
 // - question : What question do you want the LLM to answer ?
-const generate = async (players, actionsHistory, rounds, question) => {
+const generatePlayerName = async (players, actionsHistory, rounds) => {
     const apiUrl = import.meta.env.VITE_APP_LLM_API;
 
-    const context = buildContext(players, actionsHistory, rounds);
+    const filteredPlayers = players.filter(player => !player.isPlaying && player.alive);
+    const context = buildContext(DEFAULT_RULES_CONTEXT(filteredPlayers), filteredPlayers, actionsHistory, rounds);
+    const answer = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            context,
+            question: "Choose a player to eliminate.",
+        }),
+    })
+    .then(response => response.json())
+    .catch(() => null);
+
+    // If no error, return corresponding player,
+    // If it is, just return the first player
+    const randomPlayer = players.filter(p => !p.isPlaying && p.alive)[Math.floor(Math.random() * players.length)];
+    if (answer) {
+        const generatedPlayerName = findPlayerNameInString(players, answer.result);
+        if (generatedPlayerName) {
+            // Return player selected by the LLM or a random player if the LLM made a mistake
+            return players.find(player => player.username === generatedPlayerName) || randomPlayer;
+        } else {
+            return randomPlayer;
+        }
+    } else {
+        return randomPlayer;
+    }
+    // For dev only : return players[Math.floor(Math.random() * players.length)];
+}
+
+// This method generate an answer for the chat
+// The main difference with the function on top is that it takes the question in parameter
+const generateChatAnswer = async (authorOfAnswer, players, actionsHistory, rounds, question) => {
+    const apiUrl = import.meta.env.VITE_APP_LLM_API;
+
+    const context = buildContext(CHAT_RULES_CONTEXT(players, authorOfAnswer), players, actionsHistory, rounds);
     const answer = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -104,26 +117,22 @@ const generate = async (players, actionsHistory, rounds, question) => {
             question,
         }),
     })
-    .then(response => response.json())
-    .catch(() => null);
+        .then(response => response.json())
+        .catch(() => null);
 
-    // If no error, return corresponding player,
-    // If it is, just return the first player
-    const generatedPlayerName = findPlayerNameInString(players, answer.result);
-    console.log(generatedPlayerName, answer.result);
-    const randomPlayer = players[Math.floor(Math.random() * (players.length) + players.length)];
-    if (generatedPlayerName) {
-        // Return player selected by the LLM or a random player if the LLM made a mistake
-        return players.find(player => player.username === generatedPlayerName) || randomPlayer;
+    if (answer) {
+        return answer.result
+            .replace(/\\/g, "")  // Remove backslashes
+            .replace(/"/g, "");  // Remove quotes
     } else {
-        return randomPlayer;
+        return "Bonne question";
     }
-    // For dev only : return players[Math.floor(Math.random() * (players.length - 0) + players.length)];
 }
 
+
+// Find player name in a sentence
 const findPlayerNameInString = (players, inputString) => {
     const words = inputString.match(/\w+/g);
-    console.log(words);
 
     // Check if any words were found; if none, return an empty string
     if (!words) {
@@ -134,7 +143,7 @@ const findPlayerNameInString = (players, inputString) => {
     for (let player of players) {
         let username = player.username;
         for (let word of words) {
-            if (word === username) {
+            if (word.replaceAll("\"", "").replaceAll("\\", "") === username) {
                 return username;  // Return the username if found
             }
         }
@@ -144,4 +153,4 @@ const findPlayerNameInString = (players, inputString) => {
     return null;
 }
 
-export { generate };
+export { generatePlayerName, generateChatAnswer };

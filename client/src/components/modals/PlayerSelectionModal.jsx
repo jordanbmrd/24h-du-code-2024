@@ -17,7 +17,7 @@ import VoteType from "../../constants/vote-types.constants.js";
 import {GameState} from "../../constants/game.constants.js";
 
 const PlayerSelectionModal = () => {
-    const {players, gameState, playerSelectionOpen, setPlayerSelectionOpen, voteForPlayer, revealRole, continueDayPhase, endNightPhase} = useGame();
+    const {players, setPlayers, gameState, playerSelectionOpen, setPlayerSelectionOpen, voteForPlayer, revealRole, continueDayPhase, endNightPhase} = useGame();
 
     const [selectedPlayer, setSelectedPlayer] = useState(null);
 
@@ -25,14 +25,14 @@ const PlayerSelectionModal = () => {
         if (selectedPlayer) {
             if (gameState === GameState.WAITING_FOR_VOTE) {
                 // Add 1 player vote against the selected player and clear the state
-                voteForPlayer(selectedPlayer, VoteType.PLAYER_VOTES);
+                setPlayers(prevPlayers => voteForPlayer(prevPlayers, selectedPlayer, VoteType.PLAYER_VOTES));
                 continueDayPhase();
             } else if (gameState === GameState.WAITING_FOR_STEER) {
                 // Reveal the role of the selected player
                 revealRole(selectedPlayer);
             } else if (gameState === GameState.WAITING_FOR_WEREWOLVES) {
                 // Add 1 wolf vote against the selected player
-                voteForPlayer(selectedPlayer, VoteType.WEREWOLF_VOTES);
+                setPlayers(prevPlayers => voteForPlayer(prevPlayers, selectedPlayer, VoteType.WEREWOLF_VOTES));
                 endNightPhase();
             }
             setPlayerSelectionOpen(false);
@@ -54,7 +54,7 @@ const PlayerSelectionModal = () => {
                     <HStack justifyContent="center" alignItems="center">
                       <VStack justifyContent="center" alignItems="center" height="90vh" gap={10}>
                         <Text textAlign="center" fontSize="2xl" fontWeight="bold" color="white">
-                          Votez contre un joueur :
+                          Choisissez contre un joueur :
                         </Text>
 
                         { /* Display player list */ }
@@ -89,7 +89,7 @@ const PlayerSelectionModal = () => {
                         { /* When a player is selected */ }
                         {selectedPlayer ? (<>
                           <Text textAlign="center" fontSize="sm" color="white">
-                            Vous souhaitez éliminer <b>{selectedPlayer.username}</b>
+                            Vous avez sélectionné <b>{selectedPlayer.username}</b>
                           </Text>
                           <Button onClick={handleSelect} color="textPrimary" backgroundColor="buttonBackground">Confirmer</Button>
                         </>) : null}

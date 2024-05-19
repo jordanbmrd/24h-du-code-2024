@@ -16,7 +16,7 @@ const GameState = {
 }
 
 const DAY_COLOR = "rgba(222, 249, 249, 0.85)";
-const NIGHT_COLOR = "#000";
+const NIGHT_COLOR = "#090c1c";
 
 const getTimeColor = (time) => {
     if (time === Time.DAY) {

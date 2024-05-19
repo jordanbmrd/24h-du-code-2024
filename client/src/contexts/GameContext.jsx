@@ -5,12 +5,15 @@ import Role from "../constants/roles.constants.js";
 import {GameState} from "../constants/game.constants.js";
 import PropTypes from "prop-types";
 import VoteType from "../constants/vote-types.constants.js";
-import {generate} from "../utils/llm.utils.jsx";
+import {generateChatAnswer, generatePlayerName} from "../utils/llm.utils.jsx";
 import {generateRandomPlayers} from "../utils/game.utils.jsx";
+import {useWolfNotification} from "./WolfNotificationContext.jsx";
 
 export const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
+    const { sendWolfNotification } = useWolfNotification();
+
     // Related to game
     const [welcomeMessageVisible, setWelcomeMessageVisible] = useState(true);
 
@@ -162,14 +165,18 @@ export const GameProvider = ({ children }) => {
     // Last part of night phase
     // It just process the wolf vote for other players and end the night phase
     const endNightPhase = async () => {
+        let currentPlayers = [...players];
+
         // Process the votes for each other wolves
         setLoading(true);
         for (const player of players) {
             if (!player.isPlaying && player.role === Role.WEREWOLF) {
-                const selectedPlayer = await generateAnswer("Choose a player to eliminate.");
-                voteForPlayer(selectedPlayer, VoteType.WEREWOLF_VOTES);
+                const selectedPlayer = await askPlayerToLLM(VoteType.WEREWOLF_VOTES);
+                currentPlayers = voteForPlayer(currentPlayers, selectedPlayer, VoteType.WEREWOLF_VOTES);
             }
         }
+
+        setPlayers(currentPlayers);
         setLoading(false);
 
         broadcastMessage(
@@ -192,7 +199,7 @@ export const GameProvider = ({ children }) => {
 
         delay(() => {
             // Kill and broadcast who was killed by the werewolves
-            killMostVotedPlayer(VoteType.WEREWOLF_VOTES);
+            killMostVotedPlayer(players, VoteType.WEREWOLF_VOTES);
 
             delay(() => {
                 broadcastMessage("Les joueurs vont maintenant voter pour éliminer quelqu'un.", MessageType.NORMAL);
@@ -208,21 +215,22 @@ export const GameProvider = ({ children }) => {
     // Day phase (second part) includes :
     // - Role revelation from the killed one
     const continueDayPhase = async () => {
+        let currentPlayers = [...players];
+
         // For every other player, do the vote
         setLoading(true);
         for (const player of players) {
-            console.log("generateAnswer for " + player.username + " (" + player.role + ")");
             if (!player.isPlaying) {
-                const selectedPlayer = await generateAnswer("Choose a player to eliminate.");
-                console.log(actionsHistory, selectedPlayer);
-                voteForPlayer(selectedPlayer, VoteType.PLAYER_VOTES);
+                const selectedPlayer = await askPlayerToLLM(VoteType.PLAYER_VOTES);
+                currentPlayers = voteForPlayer(currentPlayers, selectedPlayer, VoteType.PLAYER_VOTES);
+                setPlayers(currentPlayers);
             }
         }
         setLoading(false);
 
         broadcastMessage("Tous les joueurs ont voté.", MessageType.NORMAL);
 
-        killMostVotedPlayer(VoteType.PLAYER_VOTES);
+        killMostVotedPlayer(currentPlayers, VoteType.PLAYER_VOTES);
 
         // Get back to playing game state
         setGameState(GameState.PLAYING);
@@ -297,22 +305,22 @@ export const GameProvider = ({ children }) => {
     // This method adds a vote against a player
     // 'type' parameter means the type of vote to add
     // 'type' parameter should be choosed from the VoteType enum
-    const voteForPlayer = (player, type) => {
-        const updatedPlayers = players.map(p => p.username === player.username ? ({
-            ...player,
+    // Warning: It doesn't update the state
+    const voteForPlayer = (players, player, type) => {
+        if (!player) return players;
+
+        return players.map(p => p.username === player.username ? ({
+            ...p,
             currentRound: {
-                ...player.currentRound,
-                [type]: player.currentRound[type] + 1,
+                ...p.currentRound,
+                [type]: (p.currentRound[type] || 0) + 1,
             }
         }) : p);
-
-        setPlayers(() => updatedPlayers);
     }
 
     // This method kills the player with the most votes
     // It takes in parameter the VoteType
-    const killMostVotedPlayer = (type) => {
-        console.log("killing with these :::", players);
+    const killMostVotedPlayer = (players, type) => {
         const mostVotedPlayer = players.reduce((player, comparedPlayer) => player.currentRound[type] > comparedPlayer.currentRound[type] ? player : comparedPlayer);
         killPlayer(mostVotedPlayer, type);
 
@@ -355,10 +363,7 @@ export const GameProvider = ({ children }) => {
 
     // Reveal the role of a player after the steer selected a player
     const revealRole = (player) => {
-        broadcastMessage(
-            `Le rôle de ${player.username} est ${player.role}`,
-            MessageType.NORMAL,
-        );
+        sendWolfNotification(`Le rôle de ${player.username} est ${player.role}, soyez discrets !`);
 
         setGameState(GameState.STEER_ENDED);
     }
@@ -414,13 +419,19 @@ export const GameProvider = ({ children }) => {
         }, 1000);
     }
 
-    // This method call the generate method located in llm.utils.jsx
-    // It generate the answer to the given question in parameter
-    const generateAnswer = async (question) => {
-        return await generate(players, actionsHistory, round, question);
+    // This method call the generatePlayerAnswer method located in llm.utils.jsx
+    // It ask to the LLM a player
+    const askPlayerToLLM = async (type) => {
+        const filteredPlayers = type === VoteType.WEREWOLF_VOTES ? players.filter(p => p.role !== Role.WEREWOLF) : players;
+        const answer = await generatePlayerName(filteredPlayers, actionsHistory, round);
+        console.log(answer);
+        return answer;
     }
 
-    useEffect(() => console.log(players), [players]);
+    // This method generates an answer to a chat message
+    const askMessageToLLM = async (question, authorOfAnswer) => {
+        return await generateChatAnswer(authorOfAnswer, players, actionsHistory, round,  question);
+    }
 
     // Exported values and methods
     const values = {
@@ -434,6 +445,7 @@ export const GameProvider = ({ children }) => {
         loading,
     };
     const methods = {
+        setPlayers,
         setMessages,
         getConnectedPlayer,
         initializePlayer,
@@ -444,6 +456,7 @@ export const GameProvider = ({ children }) => {
         revealRole,
         continueDayPhase,
         endNightPhase,
+        askMessageToLLM,
         welcomeMessageVisible,
         setWelcomeMessageVisible,
     }

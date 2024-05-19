@@ -7,6 +7,7 @@ import {useEffect, useMemo, useState} from "react";
 import {GameState, getTimeColor} from "../constants/game.constants.js";
 import {useNavigate} from "react-router-dom";
 import Role from "../constants/roles.constants.js";
+import WolfNotification from "../components/layout/WolfNotification.jsx";
 
 export function GameView() {
     const navigate = useNavigate();
@@ -71,9 +72,11 @@ export function GameView() {
 
     return (
         <Box display={'flex'} flexDirection={'column'} width={"100%"}>
+            { gameState === GameState.READY_TO_PLAY ? <WolfNotification message="Les loups-garous ne vous font pas peur ? Lancez la partie !" isStatic={true} /> : null }
+
             {/* 3D Model */}
             <Box width={"100%"} height={"100%"} position={"relative"}
-                 backgroundColor={(!loading && !modelsLoading) ? getTimeColor(time) : "black"}
+                 background={(!loading && !modelsLoading) ? getTimeColor(time) : "black"}
                  transition="background-color 0.5s">
                 {/* Loader */}
                 {modelsLoading ? (

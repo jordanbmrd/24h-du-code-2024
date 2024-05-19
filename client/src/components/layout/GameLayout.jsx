@@ -11,6 +11,7 @@ import {GameState} from "../../constants/game.constants.js";
 import {getNextButtonTextFromGameState} from "../../utils/game.utils.jsx";
 import PlayerSelectionModal from "../modals/PlayerSelectionModal.jsx";
 import WelcomeMessage from "./WelcomeMessage.jsx";
+import WolfNotification from "./WolfNotification.jsx";
 
 const GameLayout = ({onNextButton}) => {
     const {time, gameState, gameMessages, loading} = useGame();
