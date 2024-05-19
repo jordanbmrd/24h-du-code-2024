@@ -29,10 +29,7 @@
 
 ## Introduction
 
-[![Coveralls](https://img.shields.io/coveralls/github/gitpoint/git-point.svg?style=flat-square)](https://coveralls.io/github/gitpoint/git-point)
-[![All Contributors](https://img.shields.io/badge/all_contributors-73-orange.svg?style=flat-square)](./CONTRIBUTORS.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)](http://commitizen.github.io/cz-cli/)
 
 Le jeu du Loup-Garou est une adaptation du jeu de société, permettant de jouer contre une intelligence artificielle alimentée par Mistral AI. Dans ce jeu, vous pouvez incarner l'un des trois rôles : Villageois, Voyante ou Loup-Garou. Chaque rôle offre une expérience de jeu distincte et ses propres défis. L'IA, accessible via une API hébergée sur ngrok, simule des décisions réalistes ainsi que des messages dans le chat pour offrir une expérience de jeu immersive.
 
