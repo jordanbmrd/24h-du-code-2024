@@ -68,9 +68,13 @@ La notation combine deux grands volets :
 - « Un produit fini jouable » : graphique, sensation de jeu, fonctionnalités, ...
 - « Une utilisation pertinente du LLM » pour offrir la sensation au joueur humain qu'il joue avec d'autres joueurs humains.
 
-## Quelques images
+## Gameplay
 
-<video src="docs/images/video_game_example.mov" controls="controls" style="max-width: 730px;"></video>
+#### Exemple d'une partie (avec ses qualités et défauts :o) :
+
+https://github.com/jordanbmrd/24h-du-code-2024/assets/34632740/86070e2e-3038-40e7-8556-2d02065d2765
+
+#### Images :
 
 <p align="center">
     <img src = "docs/images/villager.png">
