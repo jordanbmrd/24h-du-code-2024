@@ -12,8 +12,8 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+> Ce projet a été réalisé dans le cadre d'un hackathon. Il est fonctionnel mais comporte encore de nombreux bugs à corriger.
+
 ## Table des matières
 
 - [Introduction](#introduction)
@@ -75,9 +75,15 @@ https://github.com/jordanbmrd/24h-du-code-2024/assets/34632740/86070e2e-3038-40e
 #### Images :
 
 <p align="center">
-    <img src = "docs/images/villager.png">
-    <img src = "docs/images/werewolf.png">
-    <img src = "docs/images/steer.png">
+    <img src = "docs/images/villager.png" />
+    <img src = "docs/images/werewolf.png" />
+    <img src = "docs/images/steer.png" />
+</p>
+
+#### Interfaces lors de la win ou lose :
+<p align="center">
+    <img src = "docs/images/victory.png" />
+    <img src = "docs/images/lose.png" />
 </p>
 
 ## Fonctionnalités
@@ -95,7 +101,9 @@ La réponse est générée automatiquement en appelant le LLM. Le nom d'un joueu
 #### Interface de choix d'un joueur :
 Les votes des autres joueurs sont automatiquement générés en appelant le LLM.
 
-<img src = "docs/images/vote.png" width="300" />
+<p align="center">
+    <img src = "docs/images/vote.png" />
+</p>
 
 ## Notes techniques
 
@@ -184,6 +192,8 @@ TU ES {playerName}, LE MEILLEUR JOUEUR DE "LES LOUPS-GAROUS DE THIERCELIEUX," CO
 
 
 ## Lancer en local
+
+> Vous pouvez lancer le client en local sans le LLM, dans ce cas, les décisions du LLM seront remplacées par des choix aléatoires.
 
 - Cloner ou télécharger le repo
 - Lancer le fichier `.ipynb` situé dans le dossier `llm` pour lancer l'API (Vous aurez besoin d'un token HuggingFace et d'un token Ngrok)
