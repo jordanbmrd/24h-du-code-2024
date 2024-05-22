@@ -12,6 +12,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 
+> [!NOTE]
 > Ce projet a été réalisé dans le cadre d'un hackathon. Il est fonctionnel mais comporte encore de nombreux bugs à corriger.
 
 ## Table des matières
@@ -188,11 +189,13 @@ TU ES {playerName}, LE MEILLEUR JOUEUR DE "LES LOUPS-GAROUS DE THIERCELIEUX," CO
   "Ah, intéressant ! Pourquoi tu penses ça ? Moi, j'ai un doute sur player3, mais il faut qu'on discute tous ensemble."
 
 ```
+> [!NOTE]
 > On passe dynamiquement le nom de l'auteur de la réponse, cela permet au LLM d'avoir une réponse plus adaptée. Grâce à cela, une légère adaptation du code permettrait de mettre en place des conversations entre 2 joueurs très simplement.
 
 
 ## Lancer en local
 
+> [!NOTE]
 > Vous pouvez lancer le client en local sans le LLM, dans ce cas, les décisions du LLM seront remplacées par des choix aléatoires.
 
 - Cloner ou télécharger le repo
